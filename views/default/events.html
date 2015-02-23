@@ -1,0 +1,10 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+<h1>Events</h1>
+
+{{=A('Register Event', _class='btn', _href=URL('default', 'register'))}}
+
+{{=form}}
+
+{{=A('Main Page', _class='btn', _href=URL('default', 'index'))}}

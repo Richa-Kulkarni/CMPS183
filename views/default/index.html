@@ -4,5 +4,21 @@
 <h4>{{=T('What would you like to do?')}}</h4>
 
 
-{{=A('View Profile', _class='btn', _href=URL('default', 'index'))}}
-{{=A('Register Event', _class='btn', _href=URL('default', 'register'))}}
+
+
+
+<p>{{=A('View all Events', _class='btn', _href=URL('default', 'events'))}}</p>
+<p>{{=A('View Profile', _class='btn', _href=URL('default', 'view'))}}</p>
+<p>{{=A('Reset Password', _class='btn', _href=URL('default', 'resetpass'))}}</p>
+
+
+
+
+<!--if auth.user.bio == None 
+   create a profile
+else
+   view a profile-->
+
+
+
+

@@ -44,11 +44,35 @@ response.generic_patterns = ['*'] if request.is_local else []
 from gluon.tools import Auth, Service, PluginManager
 
 auth = Auth(db)
+
+auth.settings.registration_requires_verification = True
+auth.settings.registration_requires_approval = False
+auth.settings.reset_password_requires_verification = True
+auth.messages.verify_email = 'Click on the link http://' +     request.env.http_host + URL(r=request,c='default',f='user',args=['verify_email']) + '/%(key)s to verify your email'
+auth.messages.reset_password = 'Click on the link http://' +     request.env.http_host +  URL(r=request,c='default',f='user',args=['reset_password']) + '/%(key)s to reset your password'
+
+#auth.settings.extra_fields['auth_user']=[
+ #   Field('bio_id')]
+  
+
 service = Service()
 plugins = PluginManager()
 
+auth.settings.extra_fields['auth_user']= [
+  Field('address'),
+  Field('city'),
+  Field('zip'),
+  Field('phone'),
+  Field('school'),
+  Field('organization'),
+  Field('picture', 'upload')]
+
 ## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+
+auth.define_tables(username=True)
+
+#auth.define_tables(username=False, signature=False)
+
 
 ## configure email
 mail = auth.settings.mailer
@@ -66,6 +90,12 @@ auth.settings.reset_password_requires_verification = True
 from gluon.contrib.login_methods.janrain_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
 
+
+from gluon.tools import Mail
+mail = Mail()
+mail.settings.server = 'smtp.example.com:25'
+mail.settings.sender = 'you@example.com'
+mail.settings.login = 'username:password'
 #########################################################################
 ## Define your tables below (or better in another model file) for example
 ##

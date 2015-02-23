@@ -15,16 +15,84 @@ def index():
     response.flash = T("CMPS183 Project!")
 
     something = db().select(db.register.ALL)
+    
+    
     return dict(something=something)
 
 @auth.requires_login()
 def register():
+    """Register an event."""
     form = SQLFORM(db.register)
     if form.process().accepted:
         #Successful processing.
         session.flash = T('Registered Event')
         redirect(URL('default', 'index'))
     return dict(form=form)
+
+@auth.requires_login()
+def events():
+    """View all events."""
+    response.flash = T("Aaaaaall da events!")
+
+    something = db().select(db.register.ALL)
+    
+    start_idx = 1 
+    
+    q= (db.register) 
+
+    form = SQLFORM.grid(q, args=request.args[:start_idx],
+        fields=[db.register.user_id, db.register.event_name,
+                db.register.date_posted, db.register.name,
+                db.register.event_name, db.register.email, 
+                db.register.category,
+                db.register.prof_pic],
+        editable=False, deletable=False,
+        paginate=10,
+        )
+    
+    return dict(something=something, form=form)
+        
+def profile():
+    #return dict(form=auth.profile(edit= False))
+    return dict(form=auth.profile())
+
+
+def resetpass():
+    return dict(form=auth.request_reset_password())
+
+def view():
+    """View profile."""
+    response.flash = T("User Profile")
+    form = ''
+    
+    something = db(db.auth_user.id == auth.user_id).select().first()
+    
+
+    
+    url = URL('download')
+    
+    form = SQLFORM(db.auth_user, record = something, readonly=True, upload=url)
+   
+    
+    return dict(something=something, form=form)
+
+
+
+@auth.requires_login()
+@auth.requires_signature()
+def edit():
+    """Edit profile."""
+    p = db.bio(request.args(0)) or redirect(URL('default', 'index'))
+    if p.user_id != auth.user_id:
+        session.flash = T('Not authorized.')
+        redirect(URL('default', 'index'))
+    profile = SQLFORM(db.bio, record=p)
+    if profile.process().accepted:
+        session.flash = T('Updated')
+        redirect(URL('default', 'index'))
+    return dict(profile=profile)
+
+
 
 def user():
     """

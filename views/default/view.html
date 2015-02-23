@@ -1,0 +1,13 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+<h1>Profile</h1>
+
+
+
+
+{{=form}}
+
+<p>{{=A('Edit Fields', _class='btn', _href=URL('default', 'profile'))}}</p>
+
+{{=A('Main Page', _class='btn', _href=URL('default', 'index'))}}
