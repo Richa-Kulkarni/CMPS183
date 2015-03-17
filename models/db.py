@@ -44,27 +44,52 @@ response.generic_patterns = ['*'] if request.is_local else []
 from gluon.tools import Auth, Service, PluginManager
 
 auth = Auth(db)
+
+
+
+#auth.settings.extra_fields['auth_user']=[
+ #   Field('bio_id')]
+  
+
 service = Service()
 plugins = PluginManager()
 
+auth.settings.extra_fields['auth_user']= [
+  Field('address'),
+  Field('city'),
+  Field('zip'),
+  Field('phone'),
+  Field('school'),
+  Field('organization'),
+  Field('picture', 'upload')]
+
 ## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+
+auth.define_tables(username=True)
+
+#auth.define_tables(username=False, signature=False)
+
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' if request.is_local else 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+mail.settings.server = 'smtp.gmail.com:587'
+mail.settings.sender = 'sradcmps183@gmail.com'
+mail.settings.login = 'sradcmps183@gmail.com:123apple123'
 
 ## configure auth policy
-auth.settings.registration_requires_verification = False
+auth.settings.registration_requires_verification = True
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
+auth.messages.verify_email = 'Click on the link http://' +     request.env.http_host + URL(r=request,c='default',f='user',args=['verify_email']) + '/%(key)s to verify your email'
+auth.messages.reset_password = 'Click on the link http://' +     request.env.http_host +  URL(r=request,c='default',f='user',args=['reset_password']) + '/%(key)s to reset your password'
+
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.janrain_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
+
+
 
 #########################################################################
 ## Define your tables below (or better in another model file) for example
